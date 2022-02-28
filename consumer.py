@@ -11,7 +11,7 @@ def handler(signum, frame):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--topic", help="enter a kafka topic")
-parser.add_argument("--consumer-group", help="enter a kafka consumer group", dest="consumer_group")
+parser.add_argument("--group-id", help="enter a kafka consumer group-id", dest="group_id")
 
 p = parser.parse_args()
 
@@ -24,18 +24,18 @@ signal.signal(signal.SIGINT, handler)
 
 if __name__ == "__main__":
 
-  ### for which topic should program $0 send the events ?
+  ### for which topic should program $0 get the events ?
   if not p.topic:
      p.topic = 'registered_user'
 
-  if not p.consumer_group:
-     p.consumer_group = 'consumer-group-a'
+  if not p.group_id:
+     p.group_id = 'consumer-group-a'
 
   consumer = KafkaConsumer(
 	p.topic,
 	bootstrap_servers=[kafka_server_port],
 	auto_offset_reset='earliest',
-	group_id=p.consumer_group
+	group_id=p.group_id
 	)
 
   print("starting the kafka consumer in the group '{}' on kafka server '{}'  ... ".format(p.consumer_group, kafka_server_port) )
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     counter += 1
     if counter % 10 == 1:
-      print("Topic = '{}', consumer-group = '{}:".format(p.topic, p.consumer_group))
+      print("Topic = '{}', group-id = '{}:".format(p.topic, p.group_id))
 
     print("User = {}".format(json.loads(msg.value)))
     time.sleep(1)

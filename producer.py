@@ -4,17 +4,18 @@
 #
 # Erstellt 2022-02-25-scma
 
+import json, time, argparse
 from kafka import KafkaProducer
-import json
 from data import get_registered_user
-import time
 from datetime import datetime
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--topic", help="enter a kafka topic", dest="topic")
+p = parser.parse_args()
 
 ### Where is your kafka server ?
 kafka_server_port = '172.16.162.103:9092'
-
-### for which topic should program $0 send the events ?
-kafka_topic = 'registered_user'
 
 ### Create a simple json_serializer function
 def json_serializer(data):
@@ -30,7 +31,11 @@ producer = KafkaProducer(
 
 if __name__ == "__main__":
 
-    print("\nstarting the kafka for the topic '{}', sending events to kafka server '{}'  ... \n".format(kafka_topic, kafka_server_port) )
+    ### for which topic should program $0 send the events ?
+    if not p.topic:
+      p.topic = 'registered_user'
+  
+    print("\nstarting the kafka for the topic '{}', sending events to kafka server '{}'  ... \n".format(p.topic, kafka_server_port) )
 
     ### Sending random lines every 5 seconds
     while True:
@@ -38,9 +43,8 @@ if __name__ == "__main__":
         timestamp = str(datetime.now())
         registered_user = timestamp + ': ' + str(get_registered_user())
 
-        #print("Topic = {}, Data = {}".format(kafka_topic, json_serializer(registered_user)) )
-        print("Topic = {}, Data = {}".format(kafka_topic, registered_user) )
-        producer.send(topic=kafka_topic, value=registered_user)
+        print("Topic = {}, Data = {}".format(p.topic, registered_user) )
+        producer.send(topic=p.topic, value=registered_user)
         time.sleep(5)
 
 
