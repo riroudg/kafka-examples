@@ -11,6 +11,7 @@ def handler(signum, frame):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--topic", help="enter a kafka topic")
+parser.add_argument("--consumer-group", help="enter a kafka consumer group", dest="consumer_group")
 
 p = parser.parse_args()
 
@@ -27,14 +28,17 @@ if __name__ == "__main__":
   if not p.topic:
      p.topic = 'registered_user'
 
+  if not p.consumer_group:
+     p.consumer_group = 'consumer-group-a'
+
   consumer = KafkaConsumer(
 	p.topic,
 	bootstrap_servers=[kafka_server_port],
 	auto_offset_reset='earliest',
-	group_id="consumer-group-a"
+	group_id=p.consumer_group
 	)
 
-  print("starting the kafka consumer for the topic '{}' on kafka server '{}'  ... ".format(p.topic, kafka_server_port) )
+  print("starting the kafka consumer in the group '{}' on kafka server '{}'  ... ".format(p.consumer_group, kafka_server_port) )
 
   counter = 0
   for msg in consumer:
