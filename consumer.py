@@ -36,9 +36,14 @@ if __name__ == "__main__":
 
   print("starting the kafka consumer for the topic '{}' on kafka server '{}'  ... ".format(p.topic, kafka_server_port) )
 
+  counter = 0
   for msg in consumer:
 
-    print("Topic = {}, User = {}".format(p.topic, json.loads(msg.value)))
+    counter += 1
+    if counter % 10 == 1:
+      print("Topic = '{}':".format(p.topic))
+
+    print("User = {}".format(json.loads(msg.value)))
     time.sleep(1)
 
 
