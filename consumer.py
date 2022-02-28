@@ -1,7 +1,13 @@
 from kafka import KafkaConsumer
 import json
 import time
+import signal
 
+
+def handler(signum, frame):
+  msg = "Ctrl-c was pressed."
+  print(msg)
+  exit(1)
 
 
 ### Where is your kafka server ?
@@ -10,6 +16,8 @@ kafka_server_port = '172.16.162.103:9092'
 ### for which topic should program $0 send the events ?
 kafka_topic = 'registered_user'
 
+### signal.SIGINT = strg + c
+signal.signal(signal.SIGINT, handler)
 
 if __name__ == "__main__":
 
