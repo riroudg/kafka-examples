@@ -1,8 +1,6 @@
 from kafka import KafkaConsumer
-import json
-import time
-import signal
-
+import json, time, signal
+import argparse
 
 def handler(signum, frame):
   msg = "Ctrl-c was pressed."
@@ -10,29 +8,37 @@ def handler(signum, frame):
   exit(1)
 
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--topic", help="enter a kafka topic")
+
+p = parser.parse_args()
+
+
 ### Where is your kafka server ?
 kafka_server_port = '172.16.162.103:9092'
-
-### for which topic should program $0 send the events ?
-kafka_topic = 'registered_user'
 
 ### signal.SIGINT = strg + c
 signal.signal(signal.SIGINT, handler)
 
 if __name__ == "__main__":
 
+  ### for which topic should program $0 send the events ?
+  if not p.topic:
+     p.topic = 'registered_user'
+
   consumer = KafkaConsumer(
-	kafka_topic,
+	p.topic,
 	bootstrap_servers=[kafka_server_port],
 	auto_offset_reset='earliest',
 	group_id="consumer-group-a"
 	)
 
-  print("starting the kafka consumer for the topic '{}' on kafka server '{}'  ... ".format(kafka_topic, kafka_server_port) )
+  print("starting the kafka consumer for the topic '{}' on kafka server '{}'  ... ".format(p.topic, kafka_server_port) )
 
   for msg in consumer:
 
-    print("Topic = {}, User = {}".format(kafka_topic, json.loads(msg.value)))
+    print("Topic = {}, User = {}".format(p.topic, json.loads(msg.value)))
     time.sleep(1)
 
 
