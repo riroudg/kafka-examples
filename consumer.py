@@ -38,7 +38,7 @@ if __name__ == "__main__":
 	group_id=p.group_id
 	)
 
-  print("starting the kafka consumer in the group '{}' on kafka server '{}'  ... ".format(p.consumer_group, kafka_server_port) )
+  print("starting the kafka consumer in the group '{}' on kafka server '{}'  ... ".format(p.group_id, kafka_server_port) )
 
   counter = 0
   for msg in consumer:
