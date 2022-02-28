@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     counter += 1
     if counter % 10 == 1:
-      print("Topic = '{}':".format(p.topic))
+      print("Topic = '{}', consumer-group = '{}:".format(p.topic, p.consumer_group))
 
     print("User = {}".format(json.loads(msg.value)))
     time.sleep(1)
